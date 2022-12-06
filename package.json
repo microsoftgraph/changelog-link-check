@@ -7,7 +7,7 @@
     "format": "prettier --write **/*.ts",
     "test": "jest --passWithNoTests",
     "build": "tsc",
-    "package": "ncc build --source-map",
+    "package": "ncc build",
     "all": "npm run format && npm run build && npm run test && npm run package"
   },
   "repository": {
