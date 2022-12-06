@@ -1,5 +1,7 @@
 # Changelog link checker
 
+[![Node.js CI](https://github.com/microsoftgraph/changelog-link-check/actions/workflows/node.yml/badge.svg)](https://github.com/microsoftgraph/changelog-link-check/actions/workflows/node.yml) ![License.](https://img.shields.io/badge/license-MIT-green.svg)
+
 This GitHub action blocks pull requests that include invalid links in changelog files. It is compatible with the changelog format used by the [microsoftgraph/microsoft-graph-docs](https://github.com/microsoftgraph/microsoft-graph-docs) repo.
 
 ## Setup
