@@ -1,0 +1,12 @@
+name: 'Changelog link checker'
+description: 'Detects and blocks pull requests with broken links in changelog files'
+inputs:
+  repoToken:
+    description: 'Token for the repository.'
+    required: true
+  changeLogDirectory:
+    description: 'Relative path from root of repo to changelog directory'
+    required: true
+runs:
+  using: 'node16'
+  main: 'dist/index.js'
