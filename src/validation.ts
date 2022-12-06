@@ -32,9 +32,7 @@ export async function checkFilesForBrokenLinks(
 
 export function shouldCheckFile(file: string, match: RegExp): boolean {
   match.lastIndex = 0;
-  const yes = match.test(file);
-  console.log(`Checking ${file}: ${yes}`);
-  return yes;
+  return match.test(file);
 }
 
 export async function checkFileForBrokenLinks(

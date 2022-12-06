@@ -48,6 +48,8 @@ function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             // Should only execute for pull requests
+            core.info('Here we go');
+            core.info(`Running validation. Event: ${github.context.eventName}`);
             if (github.context.eventName === 'pull_request_target') {
                 // Get the token and configure an octokit client
                 const repoToken = core.getInput('repoToken', { required: true });
@@ -210,9 +212,7 @@ function checkFilesForBrokenLinks(files, changeLogDirectory) {
 exports.checkFilesForBrokenLinks = checkFilesForBrokenLinks;
 function shouldCheckFile(file, match) {
     match.lastIndex = 0;
-    const yes = match.test(file);
-    console.log(`Checking ${file}: ${yes}`);
-    return yes;
+    return match.test(file);
 }
 exports.shouldCheckFile = shouldCheckFile;
 function checkFileForBrokenLinks(fileUrl) {
