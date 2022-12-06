@@ -9,8 +9,6 @@ import { checkFilesForBrokenLinks, generatePrComment } from './validation';
 async function run(): Promise<void> {
   try {
     // Should only execute for pull requests
-    core.info('Here we go');
-    core.info(`Running validation. Event: ${github.context.eventName}`);
     if (github.context.eventName === 'pull_request_target') {
       // Get the token and configure an octokit client
       const repoToken = core.getInput('repoToken', { required: true });
