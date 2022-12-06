@@ -4,7 +4,7 @@ This GitHub action blocks pull requests that include invalid links in changelog 
 
 ## Setup
 
-1. Create a label in your repository named `invalid links`. The action will flag pull requests with bad line endings with this tag. If the tag isn't present, the action will fail.
+1. **OPTIONAL:** Create a label in your repository named `invalid links`. The action will flag pull requests with bad line endings with this tag, and will create it if it isn't present.
 
 1. To install this action, create a .yml file in **.github\workflows** directory, with the following syntax. See [Inputs](#inputs) below for info on the inputs. (See [test.yml](.github\workflows\test.yml) in this repository for an example).
 
