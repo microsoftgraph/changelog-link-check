@@ -411,9 +411,14 @@ test('Graph URLs generate correctly from file names', () => {
   const conceptUrl =
     'https://learn.microsoft.com/en-us/graph/new-conceptual-topic';
 
+  const fileWithCaps = 'api-reference/beta/resources/coachmarkLocation.md';
+  const urlWithoutCaps =
+    'https://learn.microsoft.com/en-us/graph/api/resources/coachmarklocation?view=graph-rest-beta';
+
   expect(generateGraphUrl(resourceFile)).toBe(resourceUrl);
   expect(generateGraphUrl(apiFile)).toBe(apiUrl);
   expect(generateGraphUrl(conceptFile)).toBe(conceptUrl);
+  expect(generateGraphUrl(fileWithCaps)).toBe(urlWithoutCaps);
 });
 
 test('List of new URLs should be generated from added files', () => {
