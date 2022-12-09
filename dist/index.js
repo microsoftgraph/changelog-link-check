@@ -315,11 +315,11 @@ function generateGraphUrl(fileName) {
         }
         const restOfUrl = pathParts.slice(3).join('/');
         relativeUrl = `${relativeUrl}/${restOfUrl}?view=graph-rest-${version}`;
-        return `${graphRootUrl}${relativeUrl}`;
+        return `${graphRootUrl}${relativeUrl}`.toLowerCase();
     }
     else if (fileNameNoExtension.startsWith('concepts')) {
         const relativeUrl = fileNameNoExtension.replace(/^concepts/, '');
-        return `${graphRootUrl}${relativeUrl}`;
+        return `${graphRootUrl}${relativeUrl}`.toLowerCase();
     }
     else {
         return undefined;

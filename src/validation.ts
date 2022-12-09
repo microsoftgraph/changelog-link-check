@@ -155,10 +155,10 @@ export function generateGraphUrl(fileName: string): string | undefined {
 
     relativeUrl = `${relativeUrl}/${restOfUrl}?view=graph-rest-${version}`;
 
-    return `${graphRootUrl}${relativeUrl}`;
+    return `${graphRootUrl}${relativeUrl}`.toLowerCase();
   } else if (fileNameNoExtension.startsWith('concepts')) {
     const relativeUrl = fileNameNoExtension.replace(/^concepts/, '');
-    return `${graphRootUrl}${relativeUrl}`;
+    return `${graphRootUrl}${relativeUrl}`.toLowerCase();
   } else {
     return undefined;
   }
