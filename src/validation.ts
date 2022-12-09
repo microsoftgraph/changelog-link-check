@@ -94,7 +94,7 @@ export async function isUrlInvalid(
   }
 
   // Is it a new file in this PR that isn't published yet?
-  return !newUrls.includes(url);
+  return !newUrls.includes(url.toLowerCase());
 }
 
 export function generatePrComment(errorFiles: FileBrokenLinks[]): string {
