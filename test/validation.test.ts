@@ -4,7 +4,9 @@ import { FileBrokenLinks, PullListFile } from '../src/types';
 import {
   checkFileForBrokenLinks,
   checkFilesForBrokenLinks,
+  generateGraphUrl,
   generatePrComment,
+  getListOfNewUrls,
   isLineInvalid,
   isUrlInvalid,
   shouldCheckFile,
@@ -35,31 +37,31 @@ test('Files are correctly included for validation', () => {
 test('404 Graph URLs are detected', async () => {
   const url =
     'https://learn.microsoft.com/en-us/graph/api/not-good/dynamics-graph-reference?view=graph-rest-beta';
-  expect(await isUrlInvalid(url)).toBe(true);
+  expect(await isUrlInvalid([], url)).toBe(true);
 });
 
 test('Bad protocol URLs are detected', async () => {
   const url =
     'htt://learn.microsoft.com/en-us/graph/api/resources/dynamics-graph-reference?view=graph-rest-beta';
-  expect(await isUrlInvalid(url)).toBe(true);
+  expect(await isUrlInvalid([], url)).toBe(true);
 });
 
 test('Valid URL passes', async () => {
   const url =
     'https://learn.microsoft.com/en-us/graph/api/resources/dynamics-graph-reference?view=graph-rest-beta';
-  expect(await isUrlInvalid(url)).toBe(false);
+  expect(await isUrlInvalid([], url)).toBe(false);
 });
 
 test('Invalid link in Markdown is detected', async () => {
   const line =
     '"Description": "Added financials APIs for Dynamics 365 Business Central. For details, see the [Financials API reference](https://learn.microsoft.com/en-us/graph/INVALID/resources/dynamics-graph-reference?view=graph-rest-beta)",';
-  expect(await isLineInvalid(line)).toBe(true);
+  expect(await isLineInvalid(line, [])).toBe(true);
 });
 
 test('Valid link in Markdown passes', async () => {
   const line =
     '"Description": "Added financials APIs for Dynamics 365 Business Central. For details, see the [Financials API reference](https://learn.microsoft.com/en-us/graph/api/resources/dynamics-graph-reference?view=graph-rest-beta)",';
-  expect(await isLineInvalid(line)).toBe(false);
+  expect(await isLineInvalid(line, [])).toBe(false);
 });
 
 const badChangeLogFile = `{
@@ -112,7 +114,8 @@ test('Invalid change log file detected and correct line number reported', async 
     });
 
   const errorLines = await checkFileForBrokenLinks(
-    'https://github.com/changelog.json'
+    'https://github.com/changelog.json',
+    []
   );
 
   expect(errorLines).toHaveLength(1);
@@ -169,7 +172,7 @@ test('Valid change log file passes', async () => {
     });
 
   expect(
-    await checkFileForBrokenLinks('https://github.com/changelog.json')
+    await checkFileForBrokenLinks('https://github.com/changelog.json', [])
   ).toHaveLength(0);
 });
 
@@ -207,7 +210,7 @@ const pullListFiles: PullListFile[] = [
     changes: 0,
     blob_url: '',
     raw_url: 'https://github.com/changelog.json',
-    contents_url: ''
+    contents_url: '',
   },
   {
     sha: '',
@@ -218,7 +221,7 @@ const pullListFiles: PullListFile[] = [
     changes: 0,
     blob_url: '',
     raw_url: '',
-    contents_url: ''
+    contents_url: '',
   },
   {
     sha: '',
@@ -229,7 +232,7 @@ const pullListFiles: PullListFile[] = [
     changes: 0,
     blob_url: '',
     raw_url: '',
-    contents_url: ''
+    contents_url: '',
   },
   {
     sha: '',
@@ -240,7 +243,7 @@ const pullListFiles: PullListFile[] = [
     changes: 0,
     blob_url: '',
     raw_url: '',
-    contents_url: ''
+    contents_url: '',
   },
   {
     sha: '',
@@ -251,62 +254,62 @@ const pullListFiles: PullListFile[] = [
     changes: 0,
     blob_url: '',
     raw_url: '',
-    contents_url: ''
+    contents_url: '',
   },
   {
     sha: '',
     filename: 'api-reference/beta/api/new-api.md',
-    status: 'modified',
+    status: 'added',
     additions: 0,
     deletions: 0,
     changes: 0,
     blob_url: '',
     raw_url: '',
-    contents_url: ''
+    contents_url: '',
   },
   {
     sha: '',
     filename: 'api-reference/v1.0/api/new-api.md',
-    status: 'modified',
+    status: 'added',
     additions: 0,
     deletions: 0,
     changes: 0,
     blob_url: '',
     raw_url: '',
-    contents_url: ''
+    contents_url: '',
   },
   {
     sha: '',
     filename: 'api-reference/beta/resources/new-resource.md',
-    status: 'modified',
+    status: 'added',
     additions: 0,
     deletions: 0,
     changes: 0,
     blob_url: '',
     raw_url: '',
-    contents_url: ''
+    contents_url: '',
   },
   {
     sha: '',
     filename: 'api-reference/v1.0/resources/new-resource.md',
-    status: 'modified',
+    status: 'added',
     additions: 0,
     deletions: 0,
     changes: 0,
     blob_url: '',
     raw_url: '',
-    contents_url: ''
+    contents_url: '',
   },
   {
     sha: '',
     filename: 'concepts/new-conceptual-topic.md',
-    status: 'modified',
+    status: 'added',
     additions: 0,
     deletions: 0,
     changes: 0,
     blob_url: '',
     raw_url: '',
-    contents_url: ''
+    contents_url: '',
   },
 ];
 
@@ -335,7 +338,7 @@ const changeLogFileWithNewFiles = `{
           "ApiChange": "Resource",
           "ChangedApiName": "Financials API reference",
           "ChangeType": "Addition",
-          "Description": "Changed [link](https://learn.microsoft.com/en-us/graph/resources/user?view=graph-rest-beta).",
+          "Description": "Changed [link](https://learn.microsoft.com/en-us/graph/api/resources/user?view=graph-rest-beta).",
           "Target": "Financials API reference"
         },
         {
@@ -343,7 +346,7 @@ const changeLogFileWithNewFiles = `{
           "ApiChange": "Resource",
           "ChangedApiName": "Financials API reference",
           "ChangeType": "Addition",
-          "Description": "Changed [link](https://learn.microsoft.com/en-us/graph/resources/user?view=graph-rest-1.0).",
+          "Description": "Changed [link](https://learn.microsoft.com/en-us/graph/api/resources/user?view=graph-rest-1.0).",
           "Target": "Financials API reference"
         },
         {
@@ -367,7 +370,7 @@ const changeLogFileWithNewFiles = `{
           "ApiChange": "Resource",
           "ChangedApiName": "Financials API reference",
           "ChangeType": "Addition",
-          "Description": "Changed [link](https://learn.microsoft.com/en-us/graph/resources/new-resource?view=graph-rest-beta).",
+          "Description": "Changed [link](https://learn.microsoft.com/en-us/graph/api/resources/new-resource?view=graph-rest-beta).",
           "Target": "Financials API reference"
         },
         {
@@ -375,7 +378,7 @@ const changeLogFileWithNewFiles = `{
           "ApiChange": "Resource",
           "ChangedApiName": "Financials API reference",
           "ChangeType": "Addition",
-          "Description": "Changed [link](https://learn.microsoft.com/en-us/graph/resources/new-resource?view=graph-rest-1.0).",
+          "Description": "Changed [link](https://learn.microsoft.com/en-us/graph/api/resources/new-resource?view=graph-rest-1.0).",
           "Target": "Financials API reference"
         },
         {
@@ -397,6 +400,28 @@ const changeLogFileWithNewFiles = `{
   ]
 }`;
 
+test('Graph URLs generate correctly from file names', () => {
+  const resourceFile = 'api-reference/v1.0/resources/new-resource.md';
+  const resourceUrl =
+    'https://learn.microsoft.com/en-us/graph/api/resources/new-resource?view=graph-rest-1.0';
+  const apiFile = 'api-reference/beta/api/new-api.md';
+  const apiUrl =
+    'https://learn.microsoft.com/en-us/graph/api/new-api?view=graph-rest-beta';
+  const conceptFile = 'concepts/new-conceptual-topic.md';
+  const conceptUrl =
+    'https://learn.microsoft.com/en-us/graph/new-conceptual-topic';
+
+  expect(generateGraphUrl(resourceFile)).toBe(resourceUrl);
+  expect(generateGraphUrl(apiFile)).toBe(apiUrl);
+  expect(generateGraphUrl(conceptFile)).toBe(conceptUrl);
+});
+
+test('List of new URLs should be generated from added files', () => {
+  const newUrls = getListOfNewUrls(pullListFiles);
+
+  expect(newUrls.length).toBe(5);
+});
+
 test('URLs to files added in PR should not fail validation', async () => {
   nock('https://github.com')
     .replyContentLength()
@@ -406,7 +431,12 @@ test('URLs to files added in PR should not fail validation', async () => {
     });
 
   const changeLogDirectory = 'changelog';
-  const errorFiles = await checkFilesForBrokenLinks(pullListFiles, changeLogDirectory);
+  const errorFiles = await checkFilesForBrokenLinks(
+    pullListFiles,
+    changeLogDirectory
+  );
+
+  console.log(JSON.stringify(errorFiles));
 
   expect(errorFiles.length).toBe(0);
 });
