@@ -411,8 +411,7 @@ test('Graph URLs generate correctly from file names', () => {
   const conceptUrl =
     'https://learn.microsoft.com/en-us/graph/new-conceptual-topic';
 
-  const fileWithCaps =
-    'api-reference/beta/resources/coachmarkLocation.md';
+  const fileWithCaps = 'api-reference/beta/resources/coachmarkLocation.md';
   const urlWithoutCaps =
     'https://learn.microsoft.com/en-us/graph/api/resources/coachmarklocation?view=graph-rest-beta';
 
