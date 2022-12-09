@@ -1,8 +1,9 @@
 import { expect, test } from '@jest/globals';
 import nock from 'nock';
-import { FileBrokenLinks } from '../src/types';
+import { FileBrokenLinks, PullListFile } from '../src/types';
 import {
   checkFileForBrokenLinks,
+  checkFilesForBrokenLinks,
   generatePrComment,
   isLineInvalid,
   isUrlInvalid,
@@ -194,4 +195,218 @@ Please add a commit to this branch that fixes the invalid links.`;
 
 test('PR comment generates correctly', () => {
   expect(generatePrComment(errorFiles)).toBe(expectedPrComment);
+});
+
+const pullListFiles: PullListFile[] = [
+  {
+    sha: '',
+    filename: 'changelog/changelog.json',
+    status: 'added',
+    additions: 0,
+    deletions: 0,
+    changes: 0,
+    blob_url: '',
+    raw_url: 'https://github.com/changelog.json',
+    contents_url: ''
+  },
+  {
+    sha: '',
+    filename: 'api-reference/beta/api/user-list.md',
+    status: 'modified',
+    additions: 0,
+    deletions: 0,
+    changes: 0,
+    blob_url: '',
+    raw_url: '',
+    contents_url: ''
+  },
+  {
+    sha: '',
+    filename: 'api-reference/v1.0/api/user-list.md',
+    status: 'modified',
+    additions: 0,
+    deletions: 0,
+    changes: 0,
+    blob_url: '',
+    raw_url: '',
+    contents_url: ''
+  },
+  {
+    sha: '',
+    filename: 'api-reference/beta/resources/user.md',
+    status: 'modified',
+    additions: 0,
+    deletions: 0,
+    changes: 0,
+    blob_url: '',
+    raw_url: '',
+    contents_url: ''
+  },
+  {
+    sha: '',
+    filename: 'api-reference/v1.0/resources/user.md',
+    status: 'modified',
+    additions: 0,
+    deletions: 0,
+    changes: 0,
+    blob_url: '',
+    raw_url: '',
+    contents_url: ''
+  },
+  {
+    sha: '',
+    filename: 'api-reference/beta/api/new-api.md',
+    status: 'modified',
+    additions: 0,
+    deletions: 0,
+    changes: 0,
+    blob_url: '',
+    raw_url: '',
+    contents_url: ''
+  },
+  {
+    sha: '',
+    filename: 'api-reference/v1.0/api/new-api.md',
+    status: 'modified',
+    additions: 0,
+    deletions: 0,
+    changes: 0,
+    blob_url: '',
+    raw_url: '',
+    contents_url: ''
+  },
+  {
+    sha: '',
+    filename: 'api-reference/beta/resources/new-resource.md',
+    status: 'modified',
+    additions: 0,
+    deletions: 0,
+    changes: 0,
+    blob_url: '',
+    raw_url: '',
+    contents_url: ''
+  },
+  {
+    sha: '',
+    filename: 'api-reference/v1.0/resources/new-resource.md',
+    status: 'modified',
+    additions: 0,
+    deletions: 0,
+    changes: 0,
+    blob_url: '',
+    raw_url: '',
+    contents_url: ''
+  },
+  {
+    sha: '',
+    filename: 'concepts/new-conceptual-topic.md',
+    status: 'modified',
+    additions: 0,
+    deletions: 0,
+    changes: 0,
+    blob_url: '',
+    raw_url: '',
+    contents_url: ''
+  },
+];
+
+const changeLogFileWithNewFiles = `{
+  "changelog": [
+    {
+      "ChangeList": [
+        {
+          "Id": "230ea331-2105-45d0-bb78-bc0063bc729f",
+          "ApiChange": "Resource",
+          "ChangedApiName": "Financials API reference",
+          "ChangeType": "Addition",
+          "Description": "Changed [link](https://learn.microsoft.com/en-us/graph/api/user-list?view=graph-rest-beta).",
+          "Target": "Financials API reference"
+        },
+        {
+          "Id": "230ea331-2105-45d0-bb78-bc0063bc729f",
+          "ApiChange": "Resource",
+          "ChangedApiName": "Financials API reference",
+          "ChangeType": "Addition",
+          "Description": "Changed [link](https://learn.microsoft.com/en-us/graph/api/user-list?view=graph-rest-1.0).",
+          "Target": "Financials API reference"
+        },
+        {
+          "Id": "230ea331-2105-45d0-bb78-bc0063bc729f",
+          "ApiChange": "Resource",
+          "ChangedApiName": "Financials API reference",
+          "ChangeType": "Addition",
+          "Description": "Changed [link](https://learn.microsoft.com/en-us/graph/resources/user?view=graph-rest-beta).",
+          "Target": "Financials API reference"
+        },
+        {
+          "Id": "230ea331-2105-45d0-bb78-bc0063bc729f",
+          "ApiChange": "Resource",
+          "ChangedApiName": "Financials API reference",
+          "ChangeType": "Addition",
+          "Description": "Changed [link](https://learn.microsoft.com/en-us/graph/resources/user?view=graph-rest-1.0).",
+          "Target": "Financials API reference"
+        },
+        {
+          "Id": "230ea331-2105-45d0-bb78-bc0063bc729f",
+          "ApiChange": "Resource",
+          "ChangedApiName": "Financials API reference",
+          "ChangeType": "Addition",
+          "Description": "Changed [link](https://learn.microsoft.com/en-us/graph/api/new-api?view=graph-rest-beta).",
+          "Target": "Financials API reference"
+        },
+        {
+          "Id": "230ea331-2105-45d0-bb78-bc0063bc729f",
+          "ApiChange": "Resource",
+          "ChangedApiName": "Financials API reference",
+          "ChangeType": "Addition",
+          "Description": "Changed [link](https://learn.microsoft.com/en-us/graph/api/new-api?view=graph-rest-1.0).",
+          "Target": "Financials API reference"
+        },
+        {
+          "Id": "230ea331-2105-45d0-bb78-bc0063bc729f",
+          "ApiChange": "Resource",
+          "ChangedApiName": "Financials API reference",
+          "ChangeType": "Addition",
+          "Description": "Changed [link](https://learn.microsoft.com/en-us/graph/resources/new-resource?view=graph-rest-beta).",
+          "Target": "Financials API reference"
+        },
+        {
+          "Id": "230ea331-2105-45d0-bb78-bc0063bc729f",
+          "ApiChange": "Resource",
+          "ChangedApiName": "Financials API reference",
+          "ChangeType": "Addition",
+          "Description": "Changed [link](https://learn.microsoft.com/en-us/graph/resources/new-resource?view=graph-rest-1.0).",
+          "Target": "Financials API reference"
+        },
+        {
+          "Id": "230ea331-2105-45d0-bb78-bc0063bc729f",
+          "ApiChange": "Resource",
+          "ChangedApiName": "Financials API reference",
+          "ChangeType": "Addition",
+          "Description": "Changed [link](https://learn.microsoft.com/en-us/graph/new-conceptual-topic).",
+          "Target": "Financials API reference"
+        }
+      ],
+      "Id": "230ea331-2105-45d0-bb78-bc0063bc729f",
+      "Cloud": "prd",
+      "Version": "beta",
+      "CreatedDateTime": "2019-03-01T00:00:00",
+      "WorkloadArea": "Financials",
+      "SubArea": ""
+    }
+  ]
+}`;
+
+test('URLs to files added in PR should not fail validation', async () => {
+  nock('https://github.com')
+    .replyContentLength()
+    .get('/changelog.json')
+    .reply(200, changeLogFileWithNewFiles, {
+      'Content-Type': 'application/json; charset=utf-8',
+    });
+
+  const changeLogDirectory = 'changelog';
+  const errorFiles = await checkFilesForBrokenLinks(pullListFiles, changeLogDirectory);
+
+  expect(errorFiles.length).toBe(0);
 });
