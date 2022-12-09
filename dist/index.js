@@ -184,7 +184,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.generatePrComment = exports.isUrlInvalid = exports.isLineInvalid = exports.checkFileForBrokenLinks = exports.shouldCheckFile = exports.checkFilesForBrokenLinks = void 0;
+exports.generateGraphUrl = exports.getListOfNewUrls = exports.generatePrComment = exports.isUrlInvalid = exports.isLineInvalid = exports.checkFileForBrokenLinks = exports.shouldCheckFile = exports.checkFilesForBrokenLinks = void 0;
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 const node_fetch_1 = __importDefault(__nccwpck_require__(467));
@@ -193,9 +193,10 @@ function checkFilesForBrokenLinks(files, changeLogDirectory) {
     return __awaiter(this, void 0, void 0, function* () {
         const errorFiles = [];
         const fileUrlRegex = new RegExp(`^\\/?${changeLogDirectory}.*\\.json$`, 'gim');
+        const newUrls = getListOfNewUrls(files);
         for (const file of files) {
             if (shouldCheckFile(file.filename, fileUrlRegex)) {
-                const errorLines = yield checkFileForBrokenLinks(file.raw_url);
+                const errorLines = yield checkFileForBrokenLinks(file.raw_url, newUrls);
                 if (errorLines.length > 0) {
                     errorFiles.push({
                         fileName: file.filename,
@@ -213,14 +214,14 @@ function shouldCheckFile(file, match) {
     return match.test(file);
 }
 exports.shouldCheckFile = shouldCheckFile;
-function checkFileForBrokenLinks(fileUrl) {
+function checkFileForBrokenLinks(fileUrl, newUrls) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield (0, node_fetch_1.default)(fileUrl);
         const content = yield response.text();
         const lines = content.split('\n');
         const errorLines = [];
         for (let i = 0; i < lines.length; i += 1) {
-            if (yield isLineInvalid(lines[i])) {
+            if (yield isLineInvalid(lines[i], newUrls)) {
                 errorLines.push(i + 1);
             }
         }
@@ -228,14 +229,14 @@ function checkFileForBrokenLinks(fileUrl) {
     });
 }
 exports.checkFileForBrokenLinks = checkFileForBrokenLinks;
-function isLineInvalid(line) {
+function isLineInvalid(line, newUrls) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
         const mdLink = /\[.*\]\((?<url>.*)\)/g;
         const matches = line.matchAll(mdLink);
         for (const match of matches) {
             const url = (_a = match.groups) === null || _a === void 0 ? void 0 : _a.url;
-            if (yield isUrlInvalid(url)) {
+            if (yield isUrlInvalid(newUrls, url)) {
                 return true;
             }
         }
@@ -243,7 +244,7 @@ function isLineInvalid(line) {
     });
 }
 exports.isLineInvalid = isLineInvalid;
-function isUrlInvalid(url) {
+function isUrlInvalid(newUrls, url) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!url)
             return true;
@@ -257,11 +258,14 @@ function isUrlInvalid(url) {
         // Does it resolve?
         try {
             const response = yield (0, node_fetch_1.default)(url, { method: 'HEAD' });
-            return !response.ok;
+            if (response.ok)
+                return false;
         }
         catch (e) {
             return true;
         }
+        // Is it a new file in this PR that isn't published yet?
+        return !newUrls.includes(url);
     });
 }
 exports.isUrlInvalid = isUrlInvalid;
@@ -277,6 +281,51 @@ ${fileList}
 ${UserStrings.PR_REPORT_FOOTER}`;
 }
 exports.generatePrComment = generatePrComment;
+function getListOfNewUrls(files) {
+    const newUrls = [];
+    for (const file of files) {
+        if (file.status === 'added') {
+            const url = generateGraphUrl(file.filename);
+            if (url) {
+                newUrls.push(url);
+            }
+        }
+    }
+    return newUrls;
+}
+exports.getListOfNewUrls = getListOfNewUrls;
+const graphRootUrl = 'https://learn.microsoft.com/en-us/graph';
+function generateGraphUrl(fileName) {
+    const fileNameNoExtension = fileName.replace(/\.[^.]*$/, '');
+    if (fileNameNoExtension.startsWith('api-reference')) {
+        // Reference topic
+        const pathParts = fileNameNoExtension.split('/');
+        if (pathParts[2] !== 'api' && pathParts[2] !== 'resources') {
+            // Not valid
+            return undefined;
+        }
+        let relativeUrl = `/${pathParts[2] === 'api' ? 'api' : 'api/resources'}`;
+        if (pathParts[1] !== 'v1.0' && pathParts[1] !== 'beta') {
+            // Not valid
+            return undefined;
+        }
+        let version = pathParts[1];
+        if (version.startsWith('v')) {
+            version = '1.0';
+        }
+        const restOfUrl = pathParts.slice(3).join('/');
+        relativeUrl = `${relativeUrl}/${restOfUrl}?view=graph-rest-${version}`;
+        return `${graphRootUrl}${relativeUrl}`;
+    }
+    else if (fileNameNoExtension.startsWith('concepts')) {
+        const relativeUrl = fileNameNoExtension.replace(/^concepts/, '');
+        return `${graphRootUrl}${relativeUrl}`;
+    }
+    else {
+        return undefined;
+    }
+}
+exports.generateGraphUrl = generateGraphUrl;
 
 
 /***/ }),
