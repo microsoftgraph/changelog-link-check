@@ -6,13 +6,13 @@ import * as UserStrings from './strings';
 
 export async function checkFilesForBrokenLinks(
   files: PullListFile[],
-  changeLogDirectory: string
+  changeLogDirectory: string,
 ): Promise<FileBrokenLinks[]> {
   const errorFiles: FileBrokenLinks[] = [];
 
   const fileUrlRegex = new RegExp(
     `^\\/?${changeLogDirectory}.*\\.json$`,
-    'gim'
+    'gim',
   );
 
   const newUrls = getListOfNewUrls(files);
@@ -39,7 +39,7 @@ export function shouldCheckFile(file: string, match: RegExp): boolean {
 
 export async function checkFileForBrokenLinks(
   fileUrl: string,
-  newUrls: string[]
+  newUrls: string[],
 ): Promise<number[]> {
   const response = await fetch(fileUrl);
   const content = await response.text();
@@ -57,7 +57,7 @@ export async function checkFileForBrokenLinks(
 
 export async function isLineInvalid(
   line: string,
-  newUrls: string[]
+  newUrls: string[],
 ): Promise<boolean> {
   const mdLink = /\[.*?\]\((?<url>.*?)\)/g;
 
@@ -74,7 +74,7 @@ export async function isLineInvalid(
 
 export async function isUrlInvalid(
   newUrls: string[],
-  url?: string
+  url?: string,
 ): Promise<boolean> {
   if (!url) return true;
 
