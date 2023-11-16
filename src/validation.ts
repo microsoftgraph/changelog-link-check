@@ -59,7 +59,7 @@ export async function isLineInvalid(
   line: string,
   newUrls: string[]
 ): Promise<boolean> {
-  const mdLink = /\[.*\]\((?<url>.*)\)/g;
+  const mdLink = /\[.*?\]\((?<url>.*?)\)/g;
 
   const matches = line.matchAll(mdLink);
   for (const match of matches) {
