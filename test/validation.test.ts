@@ -26,7 +26,7 @@ test('Files are correctly included for validation', () => {
   const changeLogDirectory = 'changelog';
   const fileUrlRegex = new RegExp(
     `^\\/?${changeLogDirectory}.*\\.json$`,
-    'gim'
+    'gim',
   );
 
   fileList.forEach((file) => {
@@ -115,7 +115,7 @@ test('Invalid change log file detected and correct line number reported', async 
 
   const errorLines = await checkFileForBrokenLinks(
     'https://github.com/changelog.json',
-    []
+    [],
   );
 
   expect(errorLines).toHaveLength(1);
@@ -172,7 +172,7 @@ test('Valid change log file passes', async () => {
     });
 
   expect(
-    await checkFileForBrokenLinks('https://github.com/changelog.json', [])
+    await checkFileForBrokenLinks('https://github.com/changelog.json', []),
   ).toHaveLength(0);
 });
 
@@ -438,7 +438,7 @@ test('URLs to files added in PR should not fail validation', async () => {
   const changeLogDirectory = 'changelog';
   const errorFiles = await checkFilesForBrokenLinks(
     pullListFiles,
-    changeLogDirectory
+    changeLogDirectory,
   );
 
   console.log(JSON.stringify(errorFiles));

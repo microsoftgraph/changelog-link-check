@@ -27,15 +27,15 @@ async function run(): Promise<void> {
           owner: github.context.repo.owner,
           repo: github.context.repo.repo,
           pull_number: pullPayload.pull_request.number,
-        }
+        },
       );
 
       const errorFiles = await checkFilesForBrokenLinks(
         files,
-        changeLogDirectory
+        changeLogDirectory,
       );
       core.info(
-        `File check complete. ${errorFiles.length} files with broken links.`
+        `File check complete. ${errorFiles.length} files with broken links.`,
       );
 
       if (errorFiles.length > 0) {
@@ -51,7 +51,7 @@ async function run(): Promise<void> {
           });
         } catch (createCommentError) {
           core.warning(
-            `Unable to create comment\n${JSON.stringify(createCommentError)}`
+            `Unable to create comment\n${JSON.stringify(createCommentError)}`,
           );
         }
 
@@ -83,7 +83,7 @@ async function run(): Promise<void> {
           const error = removeLabelError as Error;
           if (error.message !== 'Label does not exist') {
             core.warning(
-              `Unable to remove label\n${JSON.stringify(removeLabelError)}`
+              `Unable to remove label\n${JSON.stringify(removeLabelError)}`,
             );
           }
         }
