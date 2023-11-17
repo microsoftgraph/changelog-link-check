@@ -1,11 +1,16 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
 import { components } from '@octokit/openapi-types';
 
 export type PullListFile = components['schemas']['diff-entry'];
 
+export type BrokenLink = {
+  lineNumber: number;
+  link: string;
+}
+
 export type FileBrokenLinks = {
   fileName: string;
-  brokenLinkLines: number[];
+  brokenLinks: BrokenLink[];
 };

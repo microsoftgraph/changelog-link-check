@@ -1,7 +1,8 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
-import fetch from 'node-fetch';
-import { FileBrokenLinks, PullListFile } from './types';
+import fetch, { FetchError } from 'node-fetch';
+import { readFile } from 'fs/promises';
+import { BrokenLink, FileBrokenLinks, PullListFile } from './types';
 import * as UserStrings from './strings';
 
 export async function checkFilesForBrokenLinks(
@@ -19,11 +20,11 @@ export async function checkFilesForBrokenLinks(
 
   for (const file of files) {
     if (shouldCheckFile(file.filename, fileUrlRegex)) {
-      const errorLines = await checkFileForBrokenLinks(file.raw_url, newUrls);
-      if (errorLines.length > 0) {
+      const brokenLinks = await checkFileForBrokenLinks(file.raw_url, newUrls);
+      if (brokenLinks.length > 0) {
         errorFiles.push({
           fileName: file.filename,
-          brokenLinkLines: errorLines,
+          brokenLinks: brokenLinks,
         });
       }
     }
@@ -40,19 +41,52 @@ export function shouldCheckFile(file: string, match: RegExp): boolean {
 export async function checkFileForBrokenLinks(
   fileUrl: string,
   newUrls: string[],
-): Promise<number[]> {
-  const response = await fetch(fileUrl);
-  const content = await response.text();
-  const lines = content.split('\n');
+): Promise<BrokenLink[]> {
+  const lines = await getFileContents(fileUrl);
 
-  const errorLines: number[] = [];
+  const brokenLinks: BrokenLink[] = [];
   for (let i = 0; i < lines.length; i += 1) {
-    if (await isLineInvalid(lines[i], newUrls)) {
-      errorLines.push(i + 1);
+    const invalidLinks = await getInvalidLinks(lines[i], newUrls);
+    for (const link of invalidLinks) {
+      brokenLinks.push({
+        lineNumber: i + 1,
+        link: link,
+      });
     }
   }
 
-  return errorLines;
+  return brokenLinks;
+}
+
+export async function getFileContents(fileUrl: string): Promise<string[]> {
+  if (fileUrl.startsWith('http')) {
+    const response = await fetch(fileUrl);
+    const content = await response.text();
+    return content.split('\n');
+  } else {
+    const content = await readFile(fileUrl, { encoding: 'utf8' });
+    return content.split('\n');
+  }
+}
+
+export async function getInvalidLinks(line: string,
+  newUrls: string[],
+): Promise<string[]> {
+  const mdLink = /\[.*?\]\((?<url>.*?)\)/g;
+
+  const invalidLinks: string[] = [];
+
+  const matches = line.matchAll(mdLink);
+  for (const match of matches) {
+    const url = match.groups?.url;
+    if (await isUrlInvalid(newUrls, url)) {
+      if (url) {
+        invalidLinks.push(url);
+      }
+    }
+  }
+
+  return invalidLinks;
 }
 
 export async function isLineInvalid(
@@ -90,6 +124,15 @@ export async function isUrlInvalid(
     const response = await fetch(url, { method: 'HEAD' });
     if (response.ok) return false;
   } catch (e) {
+    if (e instanceof FetchError && e.code === 'ETIMEDOUT') {
+      // Give it one more shot
+      try {
+        const response = await fetch(url, { method: 'HEAD' });
+        if (response.ok) return false;
+      } catch (e) {
+        return true;
+      }
+    }
     return true;
   }
 
@@ -101,10 +144,12 @@ export function generatePrComment(errorFiles: FileBrokenLinks[]): string {
   let fileList = '';
 
   // Create a bulleted list of the files and line numbers
-  errorFiles.forEach((file) => {
-    const lineNumbers = file.brokenLinkLines.join(',');
-    fileList += `- ${file.fileName}: Line(s) ${lineNumbers}\n`;
-  });
+  for (const file of errorFiles) {
+    fileList += `- ${file.fileName}:\n`;
+    for (const link of file.brokenLinks) {
+      fileList += `  - Line ${link.lineNumber}: \`${link.link}\`\n`;
+    }
+  }
 
   return `${UserStrings.PR_REPORT_HEADER}
 ${fileList}
