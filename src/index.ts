@@ -31,12 +31,9 @@ async function run(): Promise<void> {
         },
       );
 
-      let errorFiles: FileBrokenLinks[] = []
+      let errorFiles: FileBrokenLinks[] = [];
       try {
-        errorFiles = await checkFilesForBrokenLinks(
-          files,
-          changeLogDirectory,
-        );
+        errorFiles = await checkFilesForBrokenLinks(files, changeLogDirectory);
       } catch (e) {
         core.warning(`Caught error during file check: ${JSON.stringify(e)}`);
       }
