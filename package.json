@@ -1,6 +1,6 @@
 {
   "name": "changelog-link-check",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "GitHub action to detect and block pull requests with invalid links in changelog files",
   "main": "lib/index.js",
   "scripts": {

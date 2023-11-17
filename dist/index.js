@@ -63,7 +63,13 @@ function run() {
                     repo: github.context.repo.repo,
                     pull_number: pullPayload.pull_request.number,
                 });
-                const errorFiles = yield (0, validation_1.checkFilesForBrokenLinks)(files, changeLogDirectory);
+                let errorFiles = [];
+                try {
+                    errorFiles = yield (0, validation_1.checkFilesForBrokenLinks)(files, changeLogDirectory);
+                }
+                catch (e) {
+                    core.warning(`Caught error during file check: ${JSON.stringify(e)}`);
+                }
                 core.info(`File check complete. ${errorFiles.length} files with broken links.`);
                 if (errorFiles.length > 0) {
                     const comment = (0, validation_1.generatePrComment)(errorFiles);
@@ -194,6 +200,7 @@ function checkFilesForBrokenLinks(files, changeLogDirectory) {
         const newUrls = getListOfNewUrls(files);
         for (const file of files) {
             if (shouldCheckFile(file.filename, fileUrlRegex)) {
+                console.log(`Checking ${file.filename}`);
                 const brokenLinks = yield checkFileForBrokenLinks(file.raw_url, newUrls);
                 if (brokenLinks.length > 0) {
                     errorFiles.push({
