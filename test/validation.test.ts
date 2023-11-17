@@ -26,7 +26,7 @@ test('Files are correctly included for validation', () => {
   const changeLogDirectory = 'changelog';
   const fileUrlRegex = new RegExp(
     `^\\/?${changeLogDirectory}.*\\.json$`,
-    'gim'
+    'gim',
   );
 
   fileList.forEach((file) => {
@@ -115,11 +115,15 @@ test('Invalid change log file detected and correct line number reported', async 
 
   const errorLines = await checkFileForBrokenLinks(
     'https://github.com/changelog.json',
-    []
+    [],
   );
 
   expect(errorLines).toHaveLength(1);
-  expect(errorLines[0]).toBe(28);
+  expect(errorLines[0]).toHaveProperty('lineNumber', 28);
+  expect(errorLines[0]).toHaveProperty(
+    'link',
+    'https://learn.microsoft.com/en-us/graph/INVALID/resources/dynamics-graph-reference?view=graph-rest-beta',
+  );
 });
 
 const goodChangeLogFile = `{
@@ -172,18 +176,32 @@ test('Valid change log file passes', async () => {
     });
 
   expect(
-    await checkFileForBrokenLinks('https://github.com/changelog.json', [])
+    await checkFileForBrokenLinks('https://github.com/changelog.json', []),
   ).toHaveLength(0);
 });
 
 const errorFiles: FileBrokenLinks[] = [
   {
     fileName: 'file.json',
-    brokenLinkLines: [4, 10],
+    brokenLinks: [
+      {
+        lineNumber: 4,
+        link: 'https://broken',
+      },
+      {
+        lineNumber: 10,
+        link: 'https://broken',
+      },
+    ],
   },
   {
     fileName: 'file2.json',
-    brokenLinkLines: [2],
+    brokenLinks: [
+      {
+        lineNumber: 2,
+        link: 'https://broken',
+      },
+    ],
   },
 ];
 
@@ -191,8 +209,11 @@ const expectedPrComment = `## Changelog link validation failed
 
 The following files in this pull request have invalid links:
 
-- file.json: Line(s) 4,10
-- file2.json: Line(s) 2
+- file.json:
+  - Line 4: \`https://broken\`
+  - Line 10: \`https://broken\`
+- file2.json:
+  - Line 2: \`https://broken\`
 
 Please add a commit to this branch that fixes the invalid links.`;
 
@@ -438,7 +459,7 @@ test('URLs to files added in PR should not fail validation', async () => {
   const changeLogDirectory = 'changelog';
   const errorFiles = await checkFilesForBrokenLinks(
     pullListFiles,
-    changeLogDirectory
+    changeLogDirectory,
   );
 
   console.log(JSON.stringify(errorFiles));
