@@ -5,6 +5,7 @@ import * as core from '@actions/core';
 import * as github from '@actions/github';
 import { PullRequestEvent } from '@octokit/webhooks-types';
 import { checkFilesForBrokenLinks, generatePrComment } from './validation';
+import { FileBrokenLinks } from './types';
 
 async function run(): Promise<void> {
   try {
@@ -30,10 +31,16 @@ async function run(): Promise<void> {
         },
       );
 
-      const errorFiles = await checkFilesForBrokenLinks(
-        files,
-        changeLogDirectory,
-      );
+      let errorFiles: FileBrokenLinks[] = []
+      try {
+        errorFiles = await checkFilesForBrokenLinks(
+          files,
+          changeLogDirectory,
+        );
+      } catch (e) {
+        core.warning(`Caught error during file check: ${JSON.stringify(e)}`);
+      }
+
       core.info(
         `File check complete. ${errorFiles.length} files with broken links.`,
       );

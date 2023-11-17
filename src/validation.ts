@@ -20,6 +20,7 @@ export async function checkFilesForBrokenLinks(
 
   for (const file of files) {
     if (shouldCheckFile(file.filename, fileUrlRegex)) {
+      console.log(`Checking ${file.filename}`);
       const brokenLinks = await checkFileForBrokenLinks(file.raw_url, newUrls);
       if (brokenLinks.length > 0) {
         errorFiles.push({
