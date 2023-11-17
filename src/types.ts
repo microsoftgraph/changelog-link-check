@@ -8,7 +8,7 @@ export type PullListFile = components['schemas']['diff-entry'];
 export type BrokenLink = {
   lineNumber: number;
   link: string;
-}
+};
 
 export type FileBrokenLinks = {
   fileName: string;

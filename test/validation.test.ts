@@ -120,7 +120,10 @@ test('Invalid change log file detected and correct line number reported', async 
 
   expect(errorLines).toHaveLength(1);
   expect(errorLines[0]).toHaveProperty('lineNumber', 28);
-  expect(errorLines[0]).toHaveProperty('link', 'https://learn.microsoft.com/en-us/graph/INVALID/resources/dynamics-graph-reference?view=graph-rest-beta');
+  expect(errorLines[0]).toHaveProperty(
+    'link',
+    'https://learn.microsoft.com/en-us/graph/INVALID/resources/dynamics-graph-reference?view=graph-rest-beta',
+  );
 });
 
 const goodChangeLogFile = `{
@@ -183,11 +186,11 @@ const errorFiles: FileBrokenLinks[] = [
     brokenLinks: [
       {
         lineNumber: 4,
-        link: 'https://broken'
+        link: 'https://broken',
       },
       {
         lineNumber: 10,
-        link: 'https://broken'
+        link: 'https://broken',
       },
     ],
   },
@@ -196,9 +199,9 @@ const errorFiles: FileBrokenLinks[] = [
     brokenLinks: [
       {
         lineNumber: 2,
-        link: 'https://broken'
-      }
-    ]
+        link: 'https://broken',
+      },
+    ],
   },
 ];
 

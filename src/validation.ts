@@ -69,7 +69,8 @@ export async function getFileContents(fileUrl: string): Promise<string[]> {
   }
 }
 
-export async function getInvalidLinks(line: string,
+export async function getInvalidLinks(
+  line: string,
   newUrls: string[],
 ): Promise<string[]> {
   const mdLink = /\[.*?\]\((?<url>.*?)\)/g;

@@ -8,7 +8,7 @@ import { BrokenLink } from './types';
 
 async function scan() {
   const changelogArgIndex = process.argv.indexOf('--changelog-directory');
-  const removeBrokenLinks = process.argv.includes('--remove-broken-links')
+  const removeBrokenLinks = process.argv.includes('--remove-broken-links');
   if (changelogArgIndex > 0) {
     const changelogDirectory = process.argv[changelogArgIndex + 1];
     console.log(`Validating changelog files in ${changelogDirectory}`);
@@ -18,7 +18,7 @@ async function scan() {
 
     const changeLogFiles = await readdir(changelogDirectory);
 
-    const csvFileLines: string[] = [ 'File,Line,Link' ];
+    const csvFileLines: string[] = ['File,Line,Link'];
 
     for (const file of changeLogFiles) {
       if (file.toLowerCase() === 'changelog.schema.json') {
@@ -26,7 +26,10 @@ async function scan() {
       }
 
       console.log(`Scanning ${file}...`);
-      const brokenLinks = await checkFileForBrokenLinks(join(changelogDirectory, file), []);
+      const brokenLinks = await checkFileForBrokenLinks(
+        join(changelogDirectory, file),
+        [],
+      );
 
       if (brokenLinks.length > 0) {
         console.log('Broken links found:');
@@ -36,7 +39,10 @@ async function scan() {
         }
 
         if (removeBrokenLinks) {
-          removeBrokenLinksFromFile(join(changelogDirectory, file), brokenLinks);
+          removeBrokenLinksFromFile(
+            join(changelogDirectory, file),
+            brokenLinks,
+          );
         }
       }
     }
@@ -46,11 +52,16 @@ async function scan() {
       await writeFile('brokenFiles.csv', csvFileLines.join('\n'));
     }
   } else {
-    console.log('Please provide the path to your local changelog directory in the --changelog-directory parameter.');
+    console.log(
+      'Please provide the path to your local changelog directory in the --changelog-directory parameter.',
+    );
   }
 }
 
-export async function removeBrokenLinksFromFile(filePath: string, brokenLinks: BrokenLink[]) {
+export async function removeBrokenLinksFromFile(
+  filePath: string,
+  brokenLinks: BrokenLink[],
+) {
   const lines = await getFileContents(filePath);
 
   for (const link of brokenLinks) {
@@ -62,12 +73,15 @@ export async function removeBrokenLinksFromFile(filePath: string, brokenLinks: B
 }
 
 export function removeLinkFromLine(line: string, link: string): string {
-  const linkRegex = new RegExp(`\\[(?<linkText>[^\\]]*?)\\]\\(${escapeUrlForRegex(link)}\\)`, 'g');
+  const linkRegex = new RegExp(
+    `\\[(?<linkText>[^\\]]*?)\\]\\(${escapeUrlForRegex(link)}\\)`,
+    'g',
+  );
   return line.replace(linkRegex, '**$1**');
 }
 
 export function escapeUrlForRegex(url: string): string {
-  return url.replace('.', '\\.').replace('?', '\\?')
+  return url.replace('.', '\\.').replace('?', '\\?');
 }
 
 scan();
