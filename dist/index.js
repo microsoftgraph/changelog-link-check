@@ -198,6 +198,8 @@ const node_fetch_1 = __importStar(__nccwpck_require__(467));
 const promises_1 = __nccwpck_require__(3292);
 const path_1 = __nccwpck_require__(1017);
 const UserStrings = __importStar(__nccwpck_require__(8222));
+const knownGoodUrls = [];
+const knownBadUrls = [];
 function checkFilesForBrokenLinks(files, changeLogDirectory) {
     return __awaiter(this, void 0, void 0, function* () {
         const errorFiles = [];
@@ -290,31 +292,46 @@ function isUrlInvalid(newUrls, url) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!url)
             return true;
+        // Check known bad URLs
+        if (knownBadUrls.includes(url)) {
+            return true;
+        }
+        // Check known good URLs
+        if (knownGoodUrls.includes(url)) {
+            return false;
+        }
         // Is it formatted correctly?
         try {
             new URL(url);
         }
         catch (e) {
+            knownBadUrls.push(url);
             return true;
         }
         // Does it resolve?
         try {
             const response = yield (0, node_fetch_1.default)(url, { method: 'HEAD' });
-            if (response.ok)
+            if (response.ok) {
+                knownGoodUrls.push(url);
                 return false;
+            }
         }
         catch (e) {
             if (e instanceof node_fetch_1.FetchError && e.code === 'ETIMEDOUT') {
                 // Give it one more shot
                 try {
                     const response = yield (0, node_fetch_1.default)(url, { method: 'HEAD' });
-                    if (response.ok)
+                    if (response.ok) {
+                        knownGoodUrls.push(url);
                         return false;
+                    }
                 }
                 catch (e) {
+                    knownBadUrls.push(url);
                     return true;
                 }
             }
+            knownBadUrls.push(url);
             return true;
         }
         // Is it a new file in this PR that isn't published yet?
