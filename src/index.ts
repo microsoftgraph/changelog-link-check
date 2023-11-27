@@ -31,6 +31,11 @@ async function run(): Promise<void> {
         },
       );
 
+      core.info(`Pull request contains ${files.length} files.`);
+      for (const file of files) {
+        core.info(`- ${file.filename}`);
+      }
+
       let errorFiles: FileBrokenLinks[] = [];
       try {
         errorFiles = await checkFilesForBrokenLinks(files, changeLogDirectory);
