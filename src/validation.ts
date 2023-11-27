@@ -2,8 +2,12 @@
 // Licensed under the MIT license.
 import fetch, { FetchError } from 'node-fetch';
 import { readFile } from 'fs/promises';
+import { join } from 'path';
 import { BrokenLink, FileBrokenLinks, PullListFile } from './types';
+import { components } from '@octokit/openapi-types';
 import * as UserStrings from './strings';
+
+export type FileContents = components['schemas']['content-file'];
 
 export async function checkFilesForBrokenLinks(
   files: PullListFile[],
@@ -21,7 +25,7 @@ export async function checkFilesForBrokenLinks(
   for (const file of files) {
     if (shouldCheckFile(file.filename, fileUrlRegex)) {
       console.log(`Checking ${file.filename}`);
-      const brokenLinks = await checkFileForBrokenLinks(file.raw_url, newUrls);
+      const brokenLinks = await checkFileForBrokenLinks(file.filename, newUrls);
       if (brokenLinks.length > 0) {
         errorFiles.push({
           fileName: file.filename,
@@ -40,10 +44,10 @@ export function shouldCheckFile(file: string, match: RegExp): boolean {
 }
 
 export async function checkFileForBrokenLinks(
-  fileUrl: string,
+  filePath: string,
   newUrls: string[],
 ): Promise<BrokenLink[]> {
-  const lines = await getFileContents(fileUrl);
+  const lines = await getFileContents(filePath);
 
   const brokenLinks: BrokenLink[] = [];
   for (let i = 0; i < lines.length; i += 1) {
@@ -59,15 +63,10 @@ export async function checkFileForBrokenLinks(
   return brokenLinks;
 }
 
-export async function getFileContents(fileUrl: string): Promise<string[]> {
-  if (fileUrl.startsWith('http')) {
-    const response = await fetch(fileUrl);
-    const content = await response.text();
-    return content.split('\n');
-  } else {
-    const content = await readFile(fileUrl, { encoding: 'utf8' });
-    return content.split('\n');
-  }
+export async function getFileContents(filePath: string): Promise<string[]> {
+  const fullFilePath = join(process.env.GITHUB_WORKSPACE ?? '.', filePath);
+  const content = await readFile(fullFilePath, { encoding: 'utf8' });
+  return content.split('\n');
 }
 
 export async function getInvalidLinks(

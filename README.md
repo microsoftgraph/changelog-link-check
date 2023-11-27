@@ -25,6 +25,8 @@ This GitHub action blocks pull requests that include invalid links in changelog 
         name: Check files for broken links
         runs-on: ubuntu-latest
         steps:
+        steps:
+        - uses: actions/checkout@v4
         - name: Validate files
           id: validate
           with:
