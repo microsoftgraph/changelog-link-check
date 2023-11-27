@@ -32,6 +32,8 @@ export async function checkFilesForBrokenLinks(
           brokenLinks: brokenLinks,
         });
       }
+    } else {
+      console.log(`Skipping ${file.filename}`);
     }
   }
 

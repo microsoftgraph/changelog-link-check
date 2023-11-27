@@ -210,6 +210,9 @@ function checkFilesForBrokenLinks(files, changeLogDirectory) {
                     });
                 }
             }
+            else {
+                console.log(`Skipping ${file.filename}`);
+            }
         }
         return errorFiles;
     });
