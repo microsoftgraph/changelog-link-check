@@ -1,15 +1,16 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
 import * as core from '@actions/core';
 import * as github from '@actions/github';
 import { PullRequestEvent } from '@octokit/webhooks-types';
 import { checkFilesForBrokenLinks, generatePrComment } from './validation';
+import { FileBrokenLinks } from './types';
 
 async function run(): Promise<void> {
   try {
     // Should only execute for pull requests
-    if (github.context.eventName === 'pull_request_target') {
+    if (github.context.eventName === 'pull_request') {
       // Get the token and configure an octokit client
       const repoToken = core.getInput('repoToken', { required: true });
       const changeLogDirectory = core.getInput('changeLogDirectory', {
@@ -27,15 +28,23 @@ async function run(): Promise<void> {
           owner: github.context.repo.owner,
           repo: github.context.repo.repo,
           pull_number: pullPayload.pull_request.number,
-        }
+        },
       );
 
-      const errorFiles = await checkFilesForBrokenLinks(
-        files,
-        changeLogDirectory
-      );
+      core.info(`Pull request contains ${files.length} files.`);
+      for (const file of files) {
+        core.info(`- ${file.filename}`);
+      }
+
+      let errorFiles: FileBrokenLinks[] = [];
+      try {
+        errorFiles = await checkFilesForBrokenLinks(files, changeLogDirectory);
+      } catch (e) {
+        core.warning(`Caught error during file check: ${JSON.stringify(e)}`);
+      }
+
       core.info(
-        `File check complete. ${errorFiles.length} files with broken links.`
+        `File check complete. ${errorFiles.length} files with broken links.`,
       );
 
       if (errorFiles.length > 0) {
@@ -51,7 +60,7 @@ async function run(): Promise<void> {
           });
         } catch (createCommentError) {
           core.warning(
-            `Unable to create comment\n${JSON.stringify(createCommentError)}`
+            `Unable to create comment\n${JSON.stringify(createCommentError)}`,
           );
         }
 
@@ -83,7 +92,7 @@ async function run(): Promise<void> {
           const error = removeLabelError as Error;
           if (error.message !== 'Label does not exist') {
             core.warning(
-              `Unable to remove label\n${JSON.stringify(removeLabelError)}`
+              `Unable to remove label\n${JSON.stringify(removeLabelError)}`,
             );
           }
         }
