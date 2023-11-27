@@ -48,7 +48,7 @@ function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             // Should only execute for pull requests
-            if (github.context.eventName === 'pull_request_target') {
+            if (github.context.eventName === 'pull_request') {
                 // Get the token and configure an octokit client
                 const repoToken = core.getInput('repoToken', { required: true });
                 const changeLogDirectory = core.getInput('changeLogDirectory', {

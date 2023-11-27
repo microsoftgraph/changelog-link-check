@@ -10,7 +10,7 @@ import { FileBrokenLinks } from './types';
 async function run(): Promise<void> {
   try {
     // Should only execute for pull requests
-    if (github.context.eventName === 'pull_request_target') {
+    if (github.context.eventName === 'pull_request') {
       // Get the token and configure an octokit client
       const repoToken = core.getInput('repoToken', { required: true });
       const changeLogDirectory = core.getInput('changeLogDirectory', {
