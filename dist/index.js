@@ -63,6 +63,10 @@ function run() {
                     repo: github.context.repo.repo,
                     pull_number: pullPayload.pull_request.number,
                 });
+                core.info(`Pull request contains ${files.length} files.`);
+                for (const file of files) {
+                    core.info(`- ${file.filename}`);
+                }
                 let errorFiles = [];
                 try {
                     errorFiles = yield (0, validation_1.checkFilesForBrokenLinks)(files, changeLogDirectory);
