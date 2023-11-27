@@ -1,0 +1,86 @@
+{
+  "changelog": [
+    {
+      "ChangeList": [
+        {
+          "Id": "230ea331-2105-45d0-bb78-bc0063bc729f",
+          "ApiChange": "Resource",
+          "ChangedApiName": "Financials API reference",
+          "ChangeType": "Addition",
+          "Description": "Changed [link](https://learn.microsoft.com/en-us/graph/api/user-list?view=graph-rest-beta).",
+          "Target": "Financials API reference"
+        },
+        {
+          "Id": "230ea331-2105-45d0-bb78-bc0063bc729f",
+          "ApiChange": "Resource",
+          "ChangedApiName": "Financials API reference",
+          "ChangeType": "Addition",
+          "Description": "Changed [link](https://learn.microsoft.com/en-us/graph/api/user-list?view=graph-rest-1.0).",
+          "Target": "Financials API reference"
+        },
+        {
+          "Id": "230ea331-2105-45d0-bb78-bc0063bc729f",
+          "ApiChange": "Resource",
+          "ChangedApiName": "Financials API reference",
+          "ChangeType": "Addition",
+          "Description": "Changed [link](https://learn.microsoft.com/en-us/graph/api/resources/user?view=graph-rest-beta).",
+          "Target": "Financials API reference"
+        },
+        {
+          "Id": "230ea331-2105-45d0-bb78-bc0063bc729f",
+          "ApiChange": "Resource",
+          "ChangedApiName": "Financials API reference",
+          "ChangeType": "Addition",
+          "Description": "Changed [link](https://learn.microsoft.com/en-us/graph/api/resources/user?view=graph-rest-1.0).",
+          "Target": "Financials API reference"
+        },
+        {
+          "Id": "230ea331-2105-45d0-bb78-bc0063bc729f",
+          "ApiChange": "Resource",
+          "ChangedApiName": "Financials API reference",
+          "ChangeType": "Addition",
+          "Description": "Changed [link](https://learn.microsoft.com/en-us/graph/api/new-api?view=graph-rest-beta).",
+          "Target": "Financials API reference"
+        },
+        {
+          "Id": "230ea331-2105-45d0-bb78-bc0063bc729f",
+          "ApiChange": "Resource",
+          "ChangedApiName": "Financials API reference",
+          "ChangeType": "Addition",
+          "Description": "Changed [link](https://learn.microsoft.com/en-us/graph/api/new-api?view=graph-rest-1.0).",
+          "Target": "Financials API reference"
+        },
+        {
+          "Id": "230ea331-2105-45d0-bb78-bc0063bc729f",
+          "ApiChange": "Resource",
+          "ChangedApiName": "Financials API reference",
+          "ChangeType": "Addition",
+          "Description": "Changed [link](https://learn.microsoft.com/en-us/graph/api/resources/new-resource?view=graph-rest-beta).",
+          "Target": "Financials API reference"
+        },
+        {
+          "Id": "230ea331-2105-45d0-bb78-bc0063bc729f",
+          "ApiChange": "Resource",
+          "ChangedApiName": "Financials API reference",
+          "ChangeType": "Addition",
+          "Description": "Changed [link](https://learn.microsoft.com/en-us/graph/api/resources/new-resource?view=graph-rest-1.0).",
+          "Target": "Financials API reference"
+        },
+        {
+          "Id": "230ea331-2105-45d0-bb78-bc0063bc729f",
+          "ApiChange": "Resource",
+          "ChangedApiName": "Financials API reference",
+          "ChangeType": "Addition",
+          "Description": "Changed [link](https://learn.microsoft.com/en-us/graph/new-conceptual-topic).",
+          "Target": "Financials API reference"
+        }
+      ],
+      "Id": "230ea331-2105-45d0-bb78-bc0063bc729f",
+      "Cloud": "prd",
+      "Version": "beta",
+      "CreatedDateTime": "2019-03-01T00:00:00",
+      "WorkloadArea": "Financials",
+      "SubArea": ""
+    }
+  ]
+}

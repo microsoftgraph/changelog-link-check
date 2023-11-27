@@ -192,6 +192,7 @@ exports.generateGraphUrl = exports.getListOfNewUrls = exports.generatePrComment 
 // Licensed under the MIT license.
 const node_fetch_1 = __importStar(__nccwpck_require__(467));
 const promises_1 = __nccwpck_require__(3292);
+const path_1 = __nccwpck_require__(1017);
 const UserStrings = __importStar(__nccwpck_require__(8222));
 function checkFilesForBrokenLinks(files, changeLogDirectory) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -201,7 +202,7 @@ function checkFilesForBrokenLinks(files, changeLogDirectory) {
         for (const file of files) {
             if (shouldCheckFile(file.filename, fileUrlRegex)) {
                 console.log(`Checking ${file.filename}`);
-                const brokenLinks = yield checkFileForBrokenLinks(file.raw_url, newUrls);
+                const brokenLinks = yield checkFileForBrokenLinks(file.filename, newUrls);
                 if (brokenLinks.length > 0) {
                     errorFiles.push({
                         fileName: file.filename,
@@ -219,9 +220,9 @@ function shouldCheckFile(file, match) {
     return match.test(file);
 }
 exports.shouldCheckFile = shouldCheckFile;
-function checkFileForBrokenLinks(fileUrl, newUrls) {
+function checkFileForBrokenLinks(filePath, newUrls) {
     return __awaiter(this, void 0, void 0, function* () {
-        const lines = yield getFileContents(fileUrl);
+        const lines = yield getFileContents(filePath);
         const brokenLinks = [];
         for (let i = 0; i < lines.length; i += 1) {
             const invalidLinks = yield getInvalidLinks(lines[i], newUrls);
@@ -236,17 +237,12 @@ function checkFileForBrokenLinks(fileUrl, newUrls) {
     });
 }
 exports.checkFileForBrokenLinks = checkFileForBrokenLinks;
-function getFileContents(fileUrl) {
+function getFileContents(filePath) {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
-        if (fileUrl.startsWith('http')) {
-            const response = yield (0, node_fetch_1.default)(fileUrl);
-            const content = yield response.text();
-            return content.split('\n');
-        }
-        else {
-            const content = yield (0, promises_1.readFile)(fileUrl, { encoding: 'utf8' });
-            return content.split('\n');
-        }
+        const fullFilePath = (0, path_1.join)((_a = process.env.GITHUB_WORKSPACE) !== null && _a !== void 0 ? _a : '.', filePath);
+        const content = yield (0, promises_1.readFile)(fullFilePath, { encoding: 'utf8' });
+        return content.split('\n');
     });
 }
 exports.getFileContents = getFileContents;
