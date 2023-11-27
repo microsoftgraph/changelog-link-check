@@ -10,7 +10,7 @@ import { FileBrokenLinks } from './types';
 async function run(): Promise<void> {
   try {
     // Should only execute for pull requests
-    if (github.context.eventName === 'pull_request_target') {
+    if (github.context.eventName === 'pull_request') {
       // Get the token and configure an octokit client
       const repoToken = core.getInput('repoToken', { required: true });
       const changeLogDirectory = core.getInput('changeLogDirectory', {
@@ -30,6 +30,11 @@ async function run(): Promise<void> {
           pull_number: pullPayload.pull_request.number,
         },
       );
+
+      core.info(`Pull request contains ${files.length} files.`);
+      for (const file of files) {
+        core.info(`- ${file.filename}`);
+      }
 
       let errorFiles: FileBrokenLinks[] = [];
       try {

@@ -1,5 +1,4 @@
 import { expect, test } from '@jest/globals';
-import nock from 'nock';
 import { FileBrokenLinks, PullListFile } from '../src/types';
 import {
   checkFileForBrokenLinks,
@@ -64,57 +63,9 @@ test('Valid link in Markdown passes', async () => {
   expect(await isLineInvalid(line, [])).toBe(false);
 });
 
-const badChangeLogFile = `{
-  "changelog": [
-    {
-      "ChangeList": [
-        {
-          "Id": "230ea331-2105-45d0-bb78-bc0063bc729f",
-          "ApiChange": "Resource",
-          "ChangedApiName": "Financials API reference",
-          "ChangeType": "Addition",
-          "Description": "Added financials APIs for Dynamics 365 Business Central. For details, see the [Financials API reference](https://learn.microsoft.com/en-us/graph/api/resources/dynamics-graph-reference?view=graph-rest-1.0).",
-          "Target": "Financials API reference"
-        }
-      ],
-      "Id": "230ea331-2105-45d0-bb78-bc0063bc729f",
-      "Cloud": "prd",
-      "Version": "beta",
-      "CreatedDateTime": "2019-03-01T00:00:00",
-      "WorkloadArea": "Financials",
-      "SubArea": ""
-    },
-    {
-      "ChangeList": [
-        {
-          "Id": "d950a95c-3700-4c85-98c2-a3daee152fee",
-          "ApiChange": "Resource",
-          "ChangedApiName": "Financials API reference",
-          "ChangeType": "Addition",
-          "Description": "Added financials APIs for Dynamics 365 Business Central. For details, see the [Financials API reference](https://learn.microsoft.com/en-us/graph/INVALID/resources/dynamics-graph-reference?view=graph-rest-beta)",
-          "Target": "Financials API reference"
-        }
-      ],
-      "Id": "d950a95c-3700-4c85-98c2-a3daee152fee",
-      "Cloud": "prd",
-      "Version": "beta",
-      "CreatedDateTime": "2018-09-01T00:00:00",
-      "WorkloadArea": "Financials",
-      "SubArea": ""
-    }
-  ]
-}`;
-
 test('Invalid change log file detected and correct line number reported', async () => {
-  nock('https://github.com')
-    .replyContentLength()
-    .get('/changelog.json')
-    .reply(200, badChangeLogFile, {
-      'Content-Type': 'application/json; charset=utf-8',
-    });
-
   const errorLines = await checkFileForBrokenLinks(
-    'https://github.com/changelog.json',
+    '/test/data/bad-change-log.json',
     [],
   );
 
@@ -126,57 +77,9 @@ test('Invalid change log file detected and correct line number reported', async 
   );
 });
 
-const goodChangeLogFile = `{
-  "changelog": [
-    {
-      "ChangeList": [
-        {
-          "Id": "230ea331-2105-45d0-bb78-bc0063bc729f",
-          "ApiChange": "Resource",
-          "ChangedApiName": "Financials API reference",
-          "ChangeType": "Addition",
-          "Description": "Added financials APIs for Dynamics 365 Business Central. For details, see the [Financials API reference](https://learn.microsoft.com/en-us/graph/api/resources/dynamics-graph-reference?view=graph-rest-1.0).",
-          "Target": "Financials API reference"
-        }
-      ],
-      "Id": "230ea331-2105-45d0-bb78-bc0063bc729f",
-      "Cloud": "prd",
-      "Version": "beta",
-      "CreatedDateTime": "2019-03-01T00:00:00",
-      "WorkloadArea": "Financials",
-      "SubArea": ""
-    },
-    {
-      "ChangeList": [
-        {
-          "Id": "d950a95c-3700-4c85-98c2-a3daee152fee",
-          "ApiChange": "Resource",
-          "ChangedApiName": "Financials API reference",
-          "ChangeType": "Addition",
-          "Description": "Added financials APIs for Dynamics 365 Business Central. For details, see the [Financials API reference](https://learn.microsoft.com/en-us/graph/api/resources/dynamics-graph-reference?view=graph-rest-beta)",
-          "Target": "Financials API reference"
-        }
-      ],
-      "Id": "d950a95c-3700-4c85-98c2-a3daee152fee",
-      "Cloud": "prd",
-      "Version": "beta",
-      "CreatedDateTime": "2018-09-01T00:00:00",
-      "WorkloadArea": "Financials",
-      "SubArea": ""
-    }
-  ]
-}`;
-
 test('Valid change log file passes', async () => {
-  nock('https://github.com')
-    .replyContentLength()
-    .get('/changelog.json')
-    .reply(200, goodChangeLogFile, {
-      'Content-Type': 'application/json; charset=utf-8',
-    });
-
   expect(
-    await checkFileForBrokenLinks('https://github.com/changelog.json', []),
+    await checkFileForBrokenLinks('test/data/good-change-log.json', []),
   ).toHaveLength(0);
 });
 
@@ -224,13 +127,13 @@ test('PR comment generates correctly', () => {
 const pullListFiles: PullListFile[] = [
   {
     sha: '',
-    filename: 'changelog/changelog.json',
+    filename: 'test/data/change-log-with-new-files.json',
     status: 'added',
     additions: 0,
     deletions: 0,
     changes: 0,
     blob_url: '',
-    raw_url: 'https://github.com/changelog.json',
+    raw_url: '',
     contents_url: '',
   },
   {
@@ -334,93 +237,6 @@ const pullListFiles: PullListFile[] = [
   },
 ];
 
-const changeLogFileWithNewFiles = `{
-  "changelog": [
-    {
-      "ChangeList": [
-        {
-          "Id": "230ea331-2105-45d0-bb78-bc0063bc729f",
-          "ApiChange": "Resource",
-          "ChangedApiName": "Financials API reference",
-          "ChangeType": "Addition",
-          "Description": "Changed [link](https://learn.microsoft.com/en-us/graph/api/user-list?view=graph-rest-beta).",
-          "Target": "Financials API reference"
-        },
-        {
-          "Id": "230ea331-2105-45d0-bb78-bc0063bc729f",
-          "ApiChange": "Resource",
-          "ChangedApiName": "Financials API reference",
-          "ChangeType": "Addition",
-          "Description": "Changed [link](https://learn.microsoft.com/en-us/graph/api/user-list?view=graph-rest-1.0).",
-          "Target": "Financials API reference"
-        },
-        {
-          "Id": "230ea331-2105-45d0-bb78-bc0063bc729f",
-          "ApiChange": "Resource",
-          "ChangedApiName": "Financials API reference",
-          "ChangeType": "Addition",
-          "Description": "Changed [link](https://learn.microsoft.com/en-us/graph/api/resources/user?view=graph-rest-beta).",
-          "Target": "Financials API reference"
-        },
-        {
-          "Id": "230ea331-2105-45d0-bb78-bc0063bc729f",
-          "ApiChange": "Resource",
-          "ChangedApiName": "Financials API reference",
-          "ChangeType": "Addition",
-          "Description": "Changed [link](https://learn.microsoft.com/en-us/graph/api/resources/user?view=graph-rest-1.0).",
-          "Target": "Financials API reference"
-        },
-        {
-          "Id": "230ea331-2105-45d0-bb78-bc0063bc729f",
-          "ApiChange": "Resource",
-          "ChangedApiName": "Financials API reference",
-          "ChangeType": "Addition",
-          "Description": "Changed [link](https://learn.microsoft.com/en-us/graph/api/new-api?view=graph-rest-beta).",
-          "Target": "Financials API reference"
-        },
-        {
-          "Id": "230ea331-2105-45d0-bb78-bc0063bc729f",
-          "ApiChange": "Resource",
-          "ChangedApiName": "Financials API reference",
-          "ChangeType": "Addition",
-          "Description": "Changed [link](https://learn.microsoft.com/en-us/graph/api/new-api?view=graph-rest-1.0).",
-          "Target": "Financials API reference"
-        },
-        {
-          "Id": "230ea331-2105-45d0-bb78-bc0063bc729f",
-          "ApiChange": "Resource",
-          "ChangedApiName": "Financials API reference",
-          "ChangeType": "Addition",
-          "Description": "Changed [link](https://learn.microsoft.com/en-us/graph/api/resources/new-resource?view=graph-rest-beta).",
-          "Target": "Financials API reference"
-        },
-        {
-          "Id": "230ea331-2105-45d0-bb78-bc0063bc729f",
-          "ApiChange": "Resource",
-          "ChangedApiName": "Financials API reference",
-          "ChangeType": "Addition",
-          "Description": "Changed [link](https://learn.microsoft.com/en-us/graph/api/resources/new-resource?view=graph-rest-1.0).",
-          "Target": "Financials API reference"
-        },
-        {
-          "Id": "230ea331-2105-45d0-bb78-bc0063bc729f",
-          "ApiChange": "Resource",
-          "ChangedApiName": "Financials API reference",
-          "ChangeType": "Addition",
-          "Description": "Changed [link](https://learn.microsoft.com/en-us/graph/new-conceptual-topic).",
-          "Target": "Financials API reference"
-        }
-      ],
-      "Id": "230ea331-2105-45d0-bb78-bc0063bc729f",
-      "Cloud": "prd",
-      "Version": "beta",
-      "CreatedDateTime": "2019-03-01T00:00:00",
-      "WorkloadArea": "Financials",
-      "SubArea": ""
-    }
-  ]
-}`;
-
 test('Graph URLs generate correctly from file names', () => {
   const resourceFile = 'api-reference/v1.0/resources/new-resource.md';
   const resourceUrl =
@@ -449,14 +265,7 @@ test('List of new URLs should be generated from added files', () => {
 });
 
 test('URLs to files added in PR should not fail validation', async () => {
-  nock('https://github.com')
-    .replyContentLength()
-    .get('/changelog.json')
-    .reply(200, changeLogFileWithNewFiles, {
-      'Content-Type': 'application/json; charset=utf-8',
-    });
-
-  const changeLogDirectory = 'changelog';
+  const changeLogDirectory = 'test/data';
   const errorFiles = await checkFilesForBrokenLinks(
     pullListFiles,
     changeLogDirectory,
