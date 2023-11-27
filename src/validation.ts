@@ -9,6 +9,9 @@ import * as UserStrings from './strings';
 
 export type FileContents = components['schemas']['content-file'];
 
+const knownGoodUrls: string[] = [];
+const knownBadUrls: string[] = [];
+
 export async function checkFilesForBrokenLinks(
   files: PullListFile[],
   changeLogDirectory: string,
@@ -115,27 +118,46 @@ export async function isUrlInvalid(
 ): Promise<boolean> {
   if (!url) return true;
 
+  // Check known bad URLs
+  if (knownBadUrls.includes(url)) {
+    return true;
+  }
+
+  // Check known good URLs
+  if (knownGoodUrls.includes(url)) {
+    return false;
+  }
+
   // Is it formatted correctly?
   try {
     new URL(url);
   } catch (e) {
+    knownBadUrls.push(url);
     return true;
   }
 
   // Does it resolve?
   try {
     const response = await fetch(url, { method: 'HEAD' });
-    if (response.ok) return false;
+    if (response.ok) {
+      knownGoodUrls.push(url);
+      return false;
+    }
   } catch (e) {
     if (e instanceof FetchError && e.code === 'ETIMEDOUT') {
       // Give it one more shot
       try {
         const response = await fetch(url, { method: 'HEAD' });
-        if (response.ok) return false;
+        if (response.ok) {
+          knownGoodUrls.push(url);
+          return false;
+        }
       } catch (e) {
+        knownBadUrls.push(url);
         return true;
       }
     }
+    knownBadUrls.push(url);
     return true;
   }
 
