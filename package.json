@@ -26,7 +26,7 @@
     "node-fetch": "^2.7.0"
   },
   "devDependencies": {
-    "@octokit/openapi-types": "^22.1.0",
+    "@octokit/openapi-types": "^22.2.0",
     "@octokit/webhooks-types": "^7.5.1",
     "@types/node-fetch": "^2.6.11",
     "@typescript-eslint/eslint-plugin": "^7.8.0",
