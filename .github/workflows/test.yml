@@ -3,6 +3,7 @@ name: Changelog link check
 on:
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
 
 permissions:
   pull-requests: write
@@ -16,11 +17,11 @@ jobs:
     - uses: actions/checkout@v6
       with:
         sparse-checkout: |
-          test-files
+          test/data
     - name: Validate files
       id: validate
       with:
         repoToken: ${{ secrets.GITHUB_TOKEN }}
-        changeLogDirectory: test-files
+        changeLogDirectory: test/data
       uses: microsoftgraph/changelog-link-check@main
 
