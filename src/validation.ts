@@ -187,9 +187,9 @@ export function getListOfNewUrls(files: PullListFile[]): string[] {
 
   for (const file of files) {
     if (file.status === 'added') {
-      const url = generateGraphUrl(file.filename);
-      if (url) {
-        newUrls.push(url);
+      const urls = generateGraphUrls(file.filename);
+      if (urls) {
+        newUrls.push(...urls);
       }
     }
   }
@@ -199,7 +199,7 @@ export function getListOfNewUrls(files: PullListFile[]): string[] {
 
 const graphRootUrl = 'https://learn.microsoft.com/en-us/graph';
 
-export function generateGraphUrl(fileName: string): string | undefined {
+export function generateGraphUrls(fileName: string): string[] | undefined {
   const fileNameNoExtension = fileName.replace(/\.[^.]*$/, '');
 
   if (fileNameNoExtension.startsWith('api-reference')) {
@@ -224,12 +224,15 @@ export function generateGraphUrl(fileName: string): string | undefined {
 
     const restOfUrl = pathParts.slice(3).join('/');
 
-    relativeUrl = `${relativeUrl}/${restOfUrl}?view=graph-rest-${version}`;
+    relativeUrl = `${relativeUrl}/${restOfUrl}`;
 
-    return `${graphRootUrl}${relativeUrl}`.toLowerCase();
+    return [
+      `${graphRootUrl}${relativeUrl}`.toLowerCase(),
+      `${graphRootUrl}${relativeUrl}?view=graph-rest-${version}`.toLowerCase(),
+    ];
   } else if (fileNameNoExtension.startsWith('concepts')) {
     const relativeUrl = fileNameNoExtension.replace(/^concepts/, '');
-    return `${graphRootUrl}${relativeUrl}`.toLowerCase();
+    return [`${graphRootUrl}${relativeUrl}`.toLowerCase()];
   } else {
     return undefined;
   }

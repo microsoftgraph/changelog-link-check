@@ -6,7 +6,7 @@ import { FileBrokenLinks, PullListFile } from '../src/types';
 import {
   checkFileForBrokenLinks,
   checkFilesForBrokenLinks,
-  generateGraphUrl,
+  generateGraphUrls,
   generatePrComment,
   getListOfNewUrls,
   isLineInvalid,
@@ -255,38 +255,136 @@ test('Graph URLs generate correctly from file names', () => {
   const urlWithoutCaps =
     'https://learn.microsoft.com/en-us/graph/api/resources/coachmarklocation?view=graph-rest-beta';
 
-  expect(generateGraphUrl(resourceFile)).toBe(resourceUrl);
-  expect(generateGraphUrl(apiFile)).toBe(apiUrl);
-  expect(generateGraphUrl(conceptFile)).toBe(conceptUrl);
-  expect(generateGraphUrl(fileWithCaps)).toBe(urlWithoutCaps);
+  expect(generateGraphUrls(resourceFile)).toContain(resourceUrl);
+  expect(generateGraphUrls(apiFile)).toContain(apiUrl);
+  expect(generateGraphUrls(conceptFile)).toContain(conceptUrl);
+  expect(generateGraphUrls(fileWithCaps)).toContain(urlWithoutCaps);
 });
 
-test('generateGraphUrl returns undefined for invalid path segment', () => {
+test('generateGraphUrls returns undefined for invalid path segment', () => {
   expect(
-    generateGraphUrl('api-reference/beta/overview/topic.md'),
+    generateGraphUrls('api-reference/beta/overview/topic.md'),
   ).toBeUndefined();
 });
 
 test('generateGraphUrl returns undefined for invalid version', () => {
   expect(
-    generateGraphUrl('api-reference/v2.0/api/some-api.md'),
+    generateGraphUrls('api-reference/v2.0/api/some-api.md'),
   ).toBeUndefined();
 });
 
-test('generateGraphUrl returns undefined for unrecognized directory', () => {
-  expect(generateGraphUrl('other-directory/some-file.md')).toBeUndefined();
+test('generateGraphUrls returns undefined for unrecognized directory', () => {
+  expect(generateGraphUrls('other-directory/some-file.md')).toBeUndefined();
 });
 
 test('List of new URLs should be generated from added files', () => {
   const newUrls = getListOfNewUrls(pullListFiles);
 
-  expect(newUrls.length).toBe(5);
+  // Each API topic adds two URLs (one with view parameter and one without),
+  // and the conceptual topic adds one URL, for a total of 9 URLs
+  expect(newUrls.length).toBe(9);
 });
 
 test('URLs to files added in PR should not fail validation', async () => {
   const changeLogDirectory = 'test/data';
   const errorFiles = await checkFilesForBrokenLinks(
     pullListFiles,
+    changeLogDirectory,
+  );
+
+  console.log(JSON.stringify(errorFiles));
+
+  expect(errorFiles.length).toBe(0);
+});
+
+const pullListFilesWithNoViewParamBeta: PullListFile[] = [
+  {
+    sha: '',
+    filename: 'test/data/change-log-with-new-files-no-view-param.json',
+    status: 'added',
+    additions: 0,
+    deletions: 0,
+    changes: 0,
+    blob_url: '',
+    raw_url: '',
+    contents_url: '',
+  },
+  {
+    sha: '',
+    filename: 'api-reference/beta/api/new-api.md',
+    status: 'added',
+    additions: 0,
+    deletions: 0,
+    changes: 0,
+    blob_url: '',
+    raw_url: '',
+    contents_url: '',
+  },
+  {
+    sha: '',
+    filename: 'api-reference/beta/resources/new-resource.md',
+    status: 'added',
+    additions: 0,
+    deletions: 0,
+    changes: 0,
+    blob_url: '',
+    raw_url: '',
+    contents_url: '',
+  },
+];
+
+const pullListFilesWithNoViewParamV1: PullListFile[] = [
+  {
+    sha: '',
+    filename: 'test/data/change-log-with-new-files-no-view-param.json',
+    status: 'added',
+    additions: 0,
+    deletions: 0,
+    changes: 0,
+    blob_url: '',
+    raw_url: '',
+    contents_url: '',
+  },
+  {
+    sha: '',
+    filename: 'api-reference/v1.0/api/new-api.md',
+    status: 'added',
+    additions: 0,
+    deletions: 0,
+    changes: 0,
+    blob_url: '',
+    raw_url: '',
+    contents_url: '',
+  },
+  {
+    sha: '',
+    filename: 'api-reference/v1.0/resources/new-resource.md',
+    status: 'added',
+    additions: 0,
+    deletions: 0,
+    changes: 0,
+    blob_url: '',
+    raw_url: '',
+    contents_url: '',
+  },
+];
+
+test('URLs to beta files added in PR should not fail validation if view parameter is missing', async () => {
+  const changeLogDirectory = 'test/data';
+  const errorFiles = await checkFilesForBrokenLinks(
+    pullListFilesWithNoViewParamBeta,
+    changeLogDirectory,
+  );
+
+  console.log(JSON.stringify(errorFiles));
+
+  expect(errorFiles.length).toBe(0);
+});
+
+test('URLs to v1.0 files added in PR should not fail validation if view parameter is missing', async () => {
+  const changeLogDirectory = 'test/data';
+  const errorFiles = await checkFilesForBrokenLinks(
+    pullListFilesWithNoViewParamV1,
     changeLogDirectory,
   );
 

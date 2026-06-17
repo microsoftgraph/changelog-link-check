@@ -7,7 +7,7 @@
   "scripts": {
     "lint": "eslint .",
     "format": "prettier --write **/*.ts",
-    "test": "cross-env NODE_OPTIONS='--experimental-vm-modules' jest --passWithNoTests",
+    "test": "cross-env NODE_OPTIONS='--experimental-vm-modules' jest",
     "build": "tsc",
     "package": "npx rimraf ./dist && npx rollup --config rollup.config.ts --configPlugin @rollup/plugin-typescript",
     "all": "npm run format && npm run build && npm run test && npm run package"
