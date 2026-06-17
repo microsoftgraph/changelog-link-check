@@ -48,6 +48,11 @@
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.61.1"
   },
+  "overrides": {
+    "@istanbuljs/load-nyc-config": {
+      "js-yaml": "^4.1.2"
+    }
+  },
   "prettier": {
     "endOfLine": "auto",
     "singleQuote": true
