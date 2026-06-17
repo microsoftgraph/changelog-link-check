@@ -9,7 +9,7 @@
     "format": "prettier --write **/*.ts",
     "test": "cross-env NODE_OPTIONS='--experimental-vm-modules' jest",
     "build": "tsc",
-    "package": "npx rimraf ./dist && npx rollup --config rollup.config.ts --configPlugin @rollup/plugin-typescript",
+    "package": "npx rimraf ./dist && npx rollup --config rollup.config.ts --configPlugin \"@rollup/plugin-typescript={sourceMap:false}\"",
     "all": "npm run format && npm run build && npm run test && npm run package"
   },
   "repository": {
