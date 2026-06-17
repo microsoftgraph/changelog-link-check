@@ -71,6 +71,14 @@
           "ApiChange": "Resource",
           "ChangedApiName": "Financials API reference",
           "ChangeType": "Addition",
+          "Description": "Changed [link](https://learn.microsoft.com/en-us/graph/api/resources/no-version).",
+          "Target": "Financials API reference"
+        },
+        {
+          "Id": "230ea331-2105-45d0-bb78-bc0063bc729f",
+          "ApiChange": "Resource",
+          "ChangedApiName": "Financials API reference",
+          "ChangeType": "Addition",
           "Description": "Changed [link](https://learn.microsoft.com/en-us/graph/new-conceptual-topic).",
           "Target": "Financials API reference"
         }
