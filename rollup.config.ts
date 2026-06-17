@@ -14,10 +14,10 @@ const config = {
     file: 'dist/index.js',
     inlineDynamicImports: true,
     format: 'es',
-    sourcemap: true,
+    sourcemap: false,
   },
   plugins: [
-    typescript({ sourceMap: true }),
+    typescript({ sourceMap: false }),
     nodeResolve({ preferBuiltins: true }),
     commonjs(),
   ],
