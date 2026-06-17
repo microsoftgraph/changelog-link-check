@@ -18,7 +18,6 @@ export default defineConfig(
   {
     files: ['**/**.{ts,js}'],
 
-
     languageOptions: {
       parser: tseslint.parser,
       ecmaVersion: 6,
