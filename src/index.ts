@@ -4,8 +4,8 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
 import { PullRequestEvent } from '@octokit/webhooks-types';
-import { checkFilesForBrokenLinks, generatePrComment } from './validation';
-import { FileBrokenLinks } from './types';
+import { checkFilesForBrokenLinks, generatePrComment } from './validation.js';
+import { FileBrokenLinks } from './types.js';
 
 async function run(): Promise<void> {
   try {

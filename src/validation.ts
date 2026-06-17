@@ -3,9 +3,9 @@
 import fetch, { FetchError } from 'node-fetch';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
-import { BrokenLink, FileBrokenLinks, PullListFile } from './types';
+import { BrokenLink, FileBrokenLinks, PullListFile } from './types.js';
 import { components } from '@octokit/openapi-types';
-import * as UserStrings from './strings';
+import * as UserStrings from './strings.js';
 
 export type FileContents = components['schemas']['content-file'];
 

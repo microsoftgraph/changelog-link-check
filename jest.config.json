@@ -1,5 +1,6 @@
 {
   "clearMocks": true,
+  "extensionsToTreatAsEsm": [".ts"],
   "moduleFileExtensions": [
     "js",
     "ts"
@@ -9,7 +10,15 @@
     "**/*.test.ts"
   ],
   "transform": {
-    "^.+\\.ts$": "ts-jest"
+    "^.+\\.ts$": [
+      "ts-jest",
+      {
+        "tsconfig": "tsconfig.json",
+        "useESM": true
+      }
+    ]
   },
+  "preset": "ts-jest",
+  "resolver": "ts-jest-resolver",
   "verbose": true
 }
