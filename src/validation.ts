@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
+
 import fetch, { FetchError } from 'node-fetch';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
@@ -131,7 +132,7 @@ export async function isUrlInvalid(
   // Is it formatted correctly?
   try {
     new URL(url);
-  } catch (e) {
+  } catch (_e) {
     knownBadUrls.push(url);
     return true;
   }
@@ -152,7 +153,7 @@ export async function isUrlInvalid(
           knownGoodUrls.push(url);
           return false;
         }
-      } catch (e) {
+      } catch (_e) {
         knownBadUrls.push(url);
         return true;
       }

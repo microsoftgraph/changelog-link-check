@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import { expect, test } from '@jest/globals';
 import { FileBrokenLinks, PullListFile } from '../src/types';
 import {
