@@ -81,7 +81,7 @@ export function removeLinkFromLine(line: string, link: string): string {
 }
 
 export function escapeUrlForRegex(url: string): string {
-  return url.replace('.', '\\.').replace('?', '\\?');
+  return url.replaceAll('.', '\\.').replaceAll('?', '\\?');
 }
 
 scan();

@@ -261,6 +261,22 @@ test('Graph URLs generate correctly from file names', () => {
   expect(generateGraphUrl(fileWithCaps)).toBe(urlWithoutCaps);
 });
 
+test('generateGraphUrl returns undefined for invalid path segment', () => {
+  expect(
+    generateGraphUrl('api-reference/beta/overview/topic.md'),
+  ).toBeUndefined();
+});
+
+test('generateGraphUrl returns undefined for invalid version', () => {
+  expect(
+    generateGraphUrl('api-reference/v2.0/api/some-api.md'),
+  ).toBeUndefined();
+});
+
+test('generateGraphUrl returns undefined for unrecognized directory', () => {
+  expect(generateGraphUrl('other-directory/some-file.md')).toBeUndefined();
+});
+
 test('List of new URLs should be generated from added files', () => {
   const newUrls = getListOfNewUrls(pullListFiles);
 
