@@ -1,5 +1,6 @@
 # Changelog link checker
 
+<!--cSpell:ignore microsoftgraph -->
 [![Node.js CI](https://github.com/microsoftgraph/changelog-link-check/actions/workflows/node.yml/badge.svg)](https://github.com/microsoftgraph/changelog-link-check/actions/workflows/node.yml) ![License.](https://img.shields.io/badge/license-MIT-green.svg)
 
 This GitHub action blocks pull requests that include invalid links in changelog files. It is compatible with the changelog format used by the [microsoftgraph/microsoft-graph-docs](https://github.com/microsoftgraph/microsoft-graph-docs) repo.
@@ -8,7 +9,7 @@ This GitHub action blocks pull requests that include invalid links in changelog 
 
 1. **OPTIONAL:** Create a label in your repository named `invalid links`. The action will flag pull requests with bad line endings with this tag, and will create it if it isn't present.
 
-1. To install this action, create a .yml file in **.github\workflows** directory, with the following syntax. See [Inputs](#inputs) below for info on the inputs. (See [test.yml](.github\workflows\test.yml) in this repository for an example).
+1. To install this action, create a .yml file in **.github\workflows** directory, with the following syntax. See [Inputs](#inputs) below for info on the inputs. (See [test.yml](.github/workflows/test.yml) in this repository for an example).
 
     ```yml
     name: Changelog link check

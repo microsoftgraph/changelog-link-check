@@ -1,17 +1,20 @@
 {
-    "cSpell.words": [
-        "anothrNick",
-        "coachmark",
-        "Comms",
-        "CPIM",
-        "Ediscovery",
-        "financials",
-        "IGAELM",
-        "Intune",
-        "MCIEM",
-        "msrc",
-        "ncipollo",
-        "openapi",
-        "ZTNA"
-    ]
+  "cSpell.words": [
+    "anothrNick",
+    "coachmark",
+    "Comms",
+    "CPIM",
+    "Ediscovery",
+    "financials",
+    "IGAELM",
+    "Intune",
+    "MCIEM",
+    "msrc",
+    "ncipollo",
+    "openapi",
+    "ZTNA"
+  ],
+  "markdownlint.config": {
+    "MD060": false
+  }
 }
