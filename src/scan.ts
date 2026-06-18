@@ -3,8 +3,8 @@
 
 import { readdir, writeFile } from 'fs/promises';
 import { join } from 'path';
-import { checkFileForBrokenLinks, getFileContents } from './validation';
-import { BrokenLink } from './types';
+import { checkFileForBrokenLinks, getFileContents } from './validation.js';
+import { BrokenLink } from './types.js';
 
 async function scan() {
   const changelogArgIndex = process.argv.indexOf('--changelog-directory');
@@ -81,7 +81,7 @@ export function removeLinkFromLine(line: string, link: string): string {
 }
 
 export function escapeUrlForRegex(url: string): string {
-  return url.replace('.', '\\.').replace('?', '\\?');
+  return url.replaceAll('.', '\\.').replaceAll('?', '\\?');
 }
 
 scan();
